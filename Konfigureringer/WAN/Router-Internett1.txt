@@ -1,0 +1,48 @@
+enable
+configure terminal
+no ip domain-lookup
+hostname router-internett1
+!
+interface Gig0/0/0
+description Router-Internett2
+no shutdown
+ip address 220.110.0.1 255.255.255.252
+!
+interface Gig0/1/0
+description Router-Outside1-1
+no shutdown
+ip address 220.110.0.5 255.255.255.252
+!
+interface Gig0/2/0
+description Router-Outside1-2
+no shutdown
+ip address 220.110.0.9 255.255.255.252
+!
+interface Gig0/1
+description Router2-1
+no shutdown
+ip address 220.110.0.13 255.255.255.252
+!
+interface Gig0/2
+description Router2-2
+no shutdown
+ip address 220.110.0.17 255.255.255.252
+!
+exit
+ip routing
+router bgp 100
+bgp router-id 0.0.0.1
+neighbor 220.110.0.2 remote-as 200
+neighbor 220.110.0.6 remote-as 300
+neighbor 220.110.0.10 remote-as 400
+neighbor 220.110.0.14 remote-as 900
+neighbor 220.110.0.18 remote-as 1000
+network 220.110.0.0 mask 255.255.255.0
+network 220.110.0.0 mask 255.255.255.252
+network 220.110.0.4 mask 255.255.255.252
+network 220.110.0.8 mask 255.255.255.252
+network 220.110.0.12 mask 255.255.255.252
+network 220.110.0.16 mask 255.255.255.252
+!
+end
+write memory

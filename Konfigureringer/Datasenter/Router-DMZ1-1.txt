@@ -1,0 +1,67 @@
+enable
+configure terminal
+no ip domain-lookup
+hostname router-dmz1-1
+!
+interface Gig0/1
+description Router-Inside1-1
+no shutdown
+ip address 220.110.1.14 255.255.255.252
+!
+interface Gig0/0/0
+description Router-Outside1-1
+no shutdown
+ip address 220.110.1.10 255.255.255.252
+!
+interface Gig0/1/0
+description Switch-DMZ1-1
+no shutdown
+!
+interface Gig0/1/0.89
+encapsulation dot1Q 89
+ip address 189.78.159.254 255.255.224.0
+standby 89 ip 189.78.128.1
+standby 89 priority 95
+standby 89 preempt
+description Datasenter
+!
+interface Gig0/1/0.5
+encapsulation dot1Q 5
+ip address 10.3.5.254 255.255.255.0
+standby 5 ip 10.3.5.1
+standby 5 priority 105
+standby 5 preempt
+description Cisco
+!
+ip routing
+router bgp 700
+bgp router-id 1.1.1.2
+neighbor 220.110.1.9 remote-as 300
+neighbor 220.110.1.13 remote-as 500
+network 220.110.1.0 mask 255.255.255.0
+network 220.110.1.8 mask 255.255.255.252
+network 220.110.1.12 mask 255.255.255.252
+network 189.78.128.0 mask 255.255.224.0
+network 10.3.5.0 mask 255.255.255.0
+!
+end
+configure terminal
+enable secret cisco
+ip domain-name cisco.local
+crypto key generate rsa general-keys modulus 2048
+ip ssh version 2
+username cisco privilege 15 secret cisco
+line vty 0 15
+transport input ssh
+login local
+!
+ip access-list extended SSH
+permit ip 220.110.1.13 0.0.0.0 any
+permit ip 220.110.1.21 0.0.0.0 any
+deny ip any any
+exit
+line vty 0 15
+access-class SSH in
+!
+end
+write memory

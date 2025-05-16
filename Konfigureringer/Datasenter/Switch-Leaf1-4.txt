@@ -1,0 +1,54 @@
+enable
+configure terminal
+no ip domain-lookup
+hostname switch-leaf1-4
+!
+vlan 5
+name MGMT3_DS
+vlan 89
+name Datasenter
+exit
+interface vlan 5
+ip address 10.3.5.24 255.255.255.0
+no shutdown
+exit
+ip default-gateway 10.3.5.1
+!
+interface range Fa0/1-24
+shutdown
+!
+interface range Gig0/1-2
+shutdown
+!
+interface range Fa0/23-24
+description Mlt-Switch-Spine
+no shutdown
+switchport mode trunk
+!
+interface range Fa0/1-2
+description Server
+no shutdown
+switchport mode access
+switchport access vlan 89
+!
+end
+configure terminal
+enable secret cisco
+ip domain-name cisco.local
+crypto key generate rsa general-keys modulus 2048
+ip ssh version 2
+username cisco privilege 15 secret cisco
+line vty 0 15
+transport input ssh
+login local
+!
+ip access-list extended SSH
+permit ip 220.110.1.13 0.0.0.0 any
+permit ip 220.110.1.21 0.0.0.0 any
+deny ip any any
+exit
+line vty 0 15
+access-class SSH in
+!
+end
+write memory

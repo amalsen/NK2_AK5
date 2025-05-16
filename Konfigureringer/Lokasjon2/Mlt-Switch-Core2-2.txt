@@ -1,0 +1,65 @@
+enable
+configure terminal
+no ip domain-lookup
+hostname mlt-switch-core2-2
+enable secret cisco
+!
+interface range gig1/0/1-24
+shutdown
+interface range gig1/1/1-4
+shutdown
+!
+interface gig1/1/1
+no shutdown
+no switchport
+description Router2-2
+ip address 172.16.2.6 255.255.255.252
+!
+interface gig1/1/2
+no shutdown
+no switchport
+description Mlt-Switch-Core2-1
+ip address 172.16.2.10 255.255.255.252
+!
+interface range gig1/0/1-2
+no shutdown
+no switchport
+description Mlt-Switch-Dist2-2
+channel-protocol pagp
+channel-group 1 mode desirable
+interface po1
+ip address 172.16.2.17 255.255.255.252
+no shutdown
+!
+interface gig1/0/3
+no shutdown
+no switchport
+description Mlt-Switch-Dist2-1
+ip address 172.16.2.25 255.255.255.252
+!
+exit
+ip routing
+router ospf 10
+router-id 2.0.2.2
+network 10.0.0.0 0.255.255.255 area 0
+network 172.16.0.0 0.0.255.255 area 0
+!
+end
+configure terminal
+ip domain-name cisco.local
+crypto key generate rsa general-keys modulus 2048
+ip ssh version 2
+username cisco privilege 15 secret cisco
+line vty 0 15
+transport input ssh
+login local
+!
+ip access-list extended SSH
+permit ip 10.1.3.0 0.0.0.255 any
+deny ip any any
+exit
+line vty 0 15
+access-class SSH in
+!
+end
+write memory
