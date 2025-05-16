@@ -1,0 +1,63 @@
+Cisco-enheter lokasjon 1 utenfor internt nett:
+!
+ip access-list extended SSH
+permit ip 220.110.1.2 0.0.0.0 any
+permit ip 220.110.1.6 0.0.0.0 any
+deny ip any any
+!
+!
+!
+!
+Cisco-enheter internt nettverk begge lokasjoner:
+!
+ip access-list extended SSH
+permit ip 10.1.3.0 0.0.0.255 any
+deny ip any any
+!
+!
+!
+!
+Lokasjon 1:
+Rutere:
+!
+ip access-list extended NAT
+deny ip 10.1.0.0 0.0.255.255 10.2.0.0 0.0.255.255
+deny ip 10.1.0.0 0.0.255.255 172.16.2.0 0.0.0.255
+deny ip 172.16.1.0 0.0.0.255 10.2.0.0 0.0.255.255
+deny ip 172.16.1.0 0.0.0.255 172.16.2.0 0.0.0.255
+permit ip 10.0.0.0 0.255.255.255 any
+permit ip 172.16.0.0 0.0.255.255 any
+!
+ip access-list extended VPN
+permit ip 10.1.0.0 0.0.255.255 10.2.0.0 0.0.255.255
+permit ip 10.1.0.0 0.0.255.255 172.16.2.0 0.0.0.255
+permit ip 172.16.1.0 0.0.0.255 10.2.0.0 0.0.255.255
+permit ip 172.16.1.0 0.0.0.255 172.16.2.0 0.0.0.255
+!
+!
+Distribution:
+ip access-list extended Gjest
+permit udp 10.1.35.0 0.0.0.255 10.1.7.5 0.0.0.0 eq 67
+permit udp 10.1.7.5 0.0.0.0 10.1.35.0 0.0.0.255 eq 68
+deny ip 10.1.35.0 0.0.0.255 10.0.0.0 0.255.255.255
+permit ip any any
+!
+!
+!
+!
+Lokasjon 2:
+Rutere:
+!
+ip access-list extended NAT
+deny ip 10.2.0.0 0.0.255.255 10.1.0.0 0.0.255.255
+deny ip 10.2.0.0 0.0.255.255 172.16.1.0 0.0.0.255
+deny ip 172.16.2.0 0.0.0.255 10.1.0.0 0.0.255.255
+deny ip 172.16.2.0 0.0.0.255 172.16.1.0 0.0.0.255
+permit ip 10.0.0.0 0.255.255.255 any
+permit ip 172.16.0.0 0.0.255.255 any
+!
+ip access-list extended VPN
+permit ip 10.2.0.0 0.0.255.255 10.1.0.0 0.0.255.255
+permit ip 10.2.0.0 0.0.255.255 172.16.1.0 0.0.0.255
+permit ip 172.16.2.0 0.0.0.255 10.1.0.0 0.0.255.255
+permit ip 172.16.2.0 0.0.0.255 172.16.1.0 0.0.0.255
